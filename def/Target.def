@@ -13,12 +13,16 @@ DEFINITION MODULE Target;
   CONST MaxInteger = 77777B-1; (* i.e. 2**15 - 1 *)
         Undefined = -MaxInteger-1;
 
+  TYPE Integer = INTEGER[-MaxInteger..MaxInteger-1]; (* Original source code is LONGINT *)
+
+        (* --------------- Character Set ---------------- *)
+
   TYPE Ordinal = [0..255]; (* Target uses ASCII *)
 
     (* The following procedure provides a mapping from ASCII ordinal values to *)
     (* Target ordinal values. *)
 
-  PROCEDURE OrdinalOf(C: Host.AsciiOrdinal): Ordinal;
+  PROCEDURE OrdinalOf(C: Host.ASCIIOrdinal): Ordinal;
 
     (* ----------- Memory Dimensions ---- *)
 
@@ -54,14 +58,14 @@ DEFINITION MODULE Target;
 
   TYPE Level = [0..77B];
   TYPE Instruction = RECORD
-                       OpCode: OrderCode; R; AddressRegister; L: Level;
+                       OpCode: OrderCode; R: AddressRegister; L: Level;
                        N: Integer
                      END;
 
     (* ------ Object Program Addresses ---------- *)
 
   TYPE SystemRoutines = (InitializeIO, FinalizeIO, ReadInteger, WriteInteger);
-  PROCEDURE AddressOf(Routine: SytemRoutines): AddressRange;
+  PROCEDURE AddressOf(Routine: SystemRoutines): AddressRange;
 
   CONST FirstAvailable = 200;
 
