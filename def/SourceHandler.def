@@ -1,0 +1,37 @@
+DEFINITION MODULE SourceHandler;
+  (* Source text input and source listing generation are enabled through the       *)
+  (* following exported procedures:                                                *)
+  (*                                                                               *)
+  (* GetNextCharacter This procedure reads the next character from the input       *)
+  (*                  stream, copies it to the output stream, and leaves its value *)
+  (*                  in the exported variable CurrentCharacter.                   *)
+  (*                  The position of the character within the input text is       *)
+  (*                  maintained in the exported variable PositionNow.             *)
+  (*                  Ends of lines are transmitted as blanks.                     *)
+  (* Error            This procedure enables the analysis processes to record      *)
+  (*                  error code/text position pairs for output during listing     *)
+  (*                  generation.                                                  *)
+  (*                                                                               *)
+  (* FinalizeIO       This procedure handles printing of the compilation summary,  *)
+  (*                  and closes the input and output streams.                     *)
+  (*                                                                               *)
+  (* The initialization of the source handler obtains the identity of each of the  *)
+  (* source text file and listing file, and connects the compiler to both files.   *)
+  (* It also outputs a listing header.                                             *)
+
+  CONST MaxCharsPerLine = 101;
+
+  TYPE CharPosition = [1..MaxCharsPerLine];
+       TextPosition = RECORD
+                        LineNumber: CARDINAL; CharNumber: CharPosition
+                      END;
+
+  VAR CurrentCharacter: CHAR; PositionNow: TextPosition;
+
+  PROCEDURE GetNextCharacter;
+
+  PROCEDURE Error(Code: CARDINAL; Position: TextPosition);
+
+  PROCEDURE FinalizeIO;
+
+END SourceHandler.

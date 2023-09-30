@@ -1,0 +1,55 @@
+DEFINITION MODULE Host;
+  IMPORT SYSTEM;
+
+  (* This module defines the operations which must be provided for the compiler *)
+  (* by the host environment. These include *)
+
+  (* (1) An operation for determining the ASCII ordina lvalue of any character *)
+  (*     in the host machine's character set: *)
+
+  TYPE ASCIIOrdinal = [0..255];
+
+  PROCEDURE ASCIIOrdinalOf(C: CHAR): ASCIIOrdinal;
+
+  CONST EOL = 15C;
+
+  (* (2) operations for dynamic allocation of storage: *)
+
+  (* The type SYSTEM.ADDRESS is provided by all Modula-2 implementations & *)
+  (* is compatible with all pointer types. *)
+
+  TYPE AnyPointerType = SYSTEM.ADDRESS;
+
+  PROCEDURE New(VAR Pointer: AnyPointerType; ObjectSize: CARDINAL);
+  PROCEDURE Dispose(VAR Pointer: AnyPointerType; ObjectSize: CARDINAL);
+
+  (* (3) operations for performing text file input and output *)
+
+  TYPE FileAccessMode = (Input, Output);
+       File;
+
+  PROCEDURE OpenFile(OpenPrompt: ARRAY OF CHAR; Mode: FileAccessMode;
+                     VAR F: File; VAR Opened: BOOLEAN);
+  PROCEDURE ReadChar(F: File; VAR EndOfInput: BOOLEAN; VAR C: CHAR);
+  PROCEDURE WriteChar(F: File; C: CHAR);
+  PROCEDURE WriteCardinal(F: File; Number, FieldWidth: CARDINAL);
+  PROCEDURE WriteInteger(F: File; Number: INTEGER; FieldWidth: CARDINAL);
+  PROCEDURE WriteString(F: File; String: ARRAY OF CHAR);
+  PROCEDURE WriteLine(F: File);
+  PROCEDURE CloseFile(VAR F: File);
+
+  (* (4) properties of identifiers on the host implementation, and spelling *)
+  (* comparison operations *)
+
+  CONST MaxSignificantIdLength = 12;
+  TYPE StandardIdentifiers = (Integer, Char, Boolean, False, True);
+
+  TYPE Word = ARRAY [1..MaxSignificantIdLength] OF CHAR;
+  TYPE WordRelation = (FirstIsLess, WordsEqual, SecondIsLess);
+  PROCEDURE ComparisonOf(W1, W2: Word): WordRelation;
+
+  VAR BlankWord: Word;
+
+  PROCEDURE GetSpelling(Id: StandardIdentifiers; VAR Spelling: Word);
+
+END Host.
