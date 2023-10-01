@@ -1,0 +1,42 @@
+DEFINITION MODULE LexicalAnalyzer;
+  IMPORT SourceHandler, Host, Target;
+
+  TYPE SymbolType = (Identifier, IntegerNumber, CharConstant, Module, Var,
+                     Procedure, Array, Of, Begin, End, If, Then, Else, Case, Loop,
+                     Exit, For, To, Do, Read, Write, Not, And, Or, Div, Times,
+                     Plus, Minus, LessThan, LessThanOrEqual, GreaterThanOrEqual,
+                     GreaterThan, NotEquals, Equals, RightParenthesis,
+                     LeftParenthesis, RightBracket, LeftBracket, Comma, Semicolon,
+                     Period, Colon, Becomes, Thru, Separator, OtherSymbol);
+
+  (* The Lexical analyzer module enables the lexical scanning of symbols in the  *)
+  (* source stream through the exported procedure GetNextSymbol.                 *)
+  (* When called, GetNextSymbol scans the next language symbol in the input      *)
+  (* stream and returns a representation of it in the exported variable          *)
+  (* SymbolDescription which has the following fields:                           *)
+  (* Symbol    In call cases Symbol represents teh symbol scanned as defined by  *)
+  (*           the type SymbolType                                               *)
+  (* Spelling  When Symbol = Identifier, Spelling holds the (significant)        *)
+  (*           characters of the identifier scanned                              *)
+  (* IntValue  When Symbol = IntegerNumber, Value gives the integer              *)
+  (*           representation of the  constant on the target machine             *)
+  (* CharValue When Symbol = CharConstant, Value gives the ASCII ordinal value   *)
+  (*           of the constant on the target machine                             *)
+  (* The starting position of the symbol scanned is left in the field Position.  *)
+  (* The Lexical Analyzer reports errors with the following codes:               *)
+  (* 1 .... integer constant too large                                           *)
+  (* 2 .... illegal character constant                                           *)
+  (* 3 .... character constant incomplete                                        *)
+
+  VAR SymbolDescription: RECORD
+                           CASE Symbol: SymbolType OF
+                           | IntegerNumber: IntValue: Target.Integer;
+                           | CharConstant:  CharValue: Target.Ordinal;
+                           | Identifier:    Spelling: Host.Word 
+                           END;
+                           Position: SourceHandler.TextPosition
+                         END;
+
+  PROCEDURE GetNextSymbol;
+
+END LexicalAnalyzer.
